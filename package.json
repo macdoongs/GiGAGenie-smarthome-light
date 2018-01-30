@@ -1,0 +1,30 @@
+{
+  "name": "GiGaGenie-smarthome-light",
+  "version": "0.1.0",
+  "description": "GiGaGenie Smarthome Light. Interworking with System Light 2.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mac0314/GiGAGenie-smarthome-light.git"
+  },
+  "author": "Youngmin Kim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mac0314/GiGAGenie-smarthome-light/issues"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "config.json": "0.0.4",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "file-stream-rotator": "^0.2.0",
+    "fs": "0.0.1-security",
+    "morgan": "^1.9.0",
+    "serve-favicon": "^2.4.5"
+  }
+}
