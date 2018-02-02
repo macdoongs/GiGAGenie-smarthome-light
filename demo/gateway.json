@@ -1,0 +1,9 @@
+{
+  "gid": 8,
+  "gpid": "1234567890AABBCCDD",
+  "product_code": "03EF0103ABCDEFGH123456ABCDEFGH12345678",
+  "serial_number": "1609123456",
+  "iblid": "0004000000000000000000",
+  "ip": "localhost",
+  "tcp_port": 9000
+}

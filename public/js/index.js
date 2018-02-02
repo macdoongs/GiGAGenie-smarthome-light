@@ -59,3 +59,32 @@ function stopTTS(){
     }
   });
 }
+
+// TODO modify function
+// TEST request
+function handlePower(onoff){
+  alert("turn " + onoff + " the light");
+
+  var body = {};
+
+  body.onoff = onoff;
+
+  var httpRequest;
+  if (window.XMLHttpRequest) { // 모질라, 사파리등 그외 브라우저, ...
+      httpRequest = new XMLHttpRequest();
+  } else if (window.ActiveXObject) { // IE 8 이상
+      httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        // Response data
+        var json = JSON.parse(httpRequest.responseText);
+
+        alert(httpRequest.responseText);
+      }
+  };
+
+  httpRequest.open('PUT', location.origin + '/api/device/4/light', true);
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send(JSON.stringify(body));
+}

@@ -2,5 +2,12 @@
   "app": {
     "title": "시스템 조명 2.0",
     "port": "4000"
+  },
+  "sl": {
+    "gw": {
+      "ip": "localhost",
+      "port":"9000",
+      "version": "gw/v1"
+    }
   }
 }

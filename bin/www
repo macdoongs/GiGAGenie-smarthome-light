@@ -23,7 +23,7 @@ cluster.schedulingPolicy = cluster.SCHED_RR;
 
 var cpuCount = os.cpus().length;
 
-global.title = config.app.title;
+global.APP_NAME = config.app.title;
 
 var worker = [];
 
@@ -33,7 +33,7 @@ if(cluster.isMaster) {
         cluster.fork();
     });
     console.log("-----------------------------");
-    console.log("\t" + global.title + " start!\n");
+    console.log("\t" + global.APP_NAME + " start!\n");
     console.log('CPU Count:', cpuCount);
 
     for(var i = 0; i < cpuCount; i++) {

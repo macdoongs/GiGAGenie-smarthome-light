@@ -15,7 +15,7 @@ var app = express();
 
 
 
-var logDirectory = './log';
+var logDirectory = './logs';
 
 // ensure log directory exists
 if (!fs.existsSync(logDirectory)){
@@ -68,9 +68,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Web module
 var index = require('./routes/web/index');
 
+// API module
+var indexAPI = require('./routes/api/index');
+
 
 // Web page routes
 app.use('/', index);
+
+// API routes
+app.use('/api', indexAPI);
 
 
 app.use(function(req, res, next){
@@ -93,7 +99,7 @@ if (app.get('env') === 'development') {
   app.use(function(error, req, res, next) {
     res.status(error.status || 500);
     res.render('error', {
-      title: global.title,
+      title: global.APP_NAME,
       message: error.message,
       error: error
     });
@@ -105,7 +111,7 @@ if (app.get('env') === 'development') {
 app.use(function(error, req, res, next) {
   res.status(error.status || 500);
   res.render('error', {
-    title: global.title,
+    title: global.APP_NAME,
     message: error.message,
     error: {}
   });

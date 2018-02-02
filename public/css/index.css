@@ -16,3 +16,11 @@
 .button-no {
   background-color: #f44336; /* Red */
 }
+
+.button-on {
+  background-color: #e7e7e7; color: black; /* Gray */
+}
+
+.button-off {
+  background-color: #555555; /* Gray */
+}
