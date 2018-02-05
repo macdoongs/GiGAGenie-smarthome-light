@@ -23,15 +23,15 @@ gigagenie.voice.onRequestClose = function(){
 };
 
 function control(){
-    var options={};
-    options.voicelanguage = 1;
+      var options={};
+      options.voicelanguage = 1;
 
-    gigagenie.voice.getVoiceText(options, function(code, message, extra){
-      if(code == 200){
-        alert("command : " + extra.voicetext);
-      }else{
-        alert("다시해보세요");
-      }
+      gigagenie.voice.getVoiceText(options, function(code, message, extra){
+        if(code == 200){
+          alert("command : " + extra.voicetext);
+        }else{
+          alert("다시해보세요");
+        }
   });
 }
 
