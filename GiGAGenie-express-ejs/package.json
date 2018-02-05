@@ -1,5 +1,5 @@
 {
-  "name": "GiGaGenie-smarthome-light",
+  "name": "GiGaGenie-express-ejs",
   "version": "0.1.0",
   "description": "GiGaGenie Smarthome Light. Interworking with System Light 2.0",
   "main": "index.js",

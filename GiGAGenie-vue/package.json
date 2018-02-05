@@ -13,6 +13,14 @@
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
     "build": "node build/build.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mac0314/GiGAGenie-smarthome-light.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mac0314/GiGAGenie-smarthome-light/issues"
+  },
   "dependencies": {
     "axios": "^0.17.1",
     "vue": "^2.5.2",
