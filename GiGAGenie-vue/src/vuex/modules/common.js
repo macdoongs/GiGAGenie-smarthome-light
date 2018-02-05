@@ -1,18 +1,28 @@
-// import * as types from '../mutation-types'
+import * as types from '../mutation-types'
 
 const state = {
-  baseURI: 'http://localhost:4000'
+  apiKey: 'RTUwMDEwNzR8R0JPWERFVk18MTUxNTAzMjA5MTAxNQ==',
+  keyType: 'GBOXDEVM',
+  // keytype: 'GBOXCOMM',
+  baseURI: 'http://localhost:4000',
+  onOff: 'off'
 }
 
 /* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
-/*
-const mutations = {
 
+const mutations = {
+  [types.TOGGLE_ON_OFF] (state) {
+    if (state.onOff === 'on') {
+      state.onOff = 'off'
+    } else {
+      state.onOff = 'on'
+    }
+  }
 }
-*/
 
 export default {
-  state
+  state,
+  mutations
 }

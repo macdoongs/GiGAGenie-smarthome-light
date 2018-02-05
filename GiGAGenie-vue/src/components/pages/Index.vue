@@ -1,19 +1,19 @@
 <template>
   <div>
     <center>
-      <input type='submit' value='STOP TTS' class='button button-no' v-on:click='stopTTS()'>
+      <Button v-bind:buttonId='0' v-bind:value="'STOP TTS'" class="button-yes" v-on:click_0='stopTTS()'></Button>
       <br>
       <br>
       <br>
-      <input type='submit' value='START TTS' class='button button-yes' v-on:click='control()'>
+      <Button v-bind:buttonId='1' v-bind:value='"START TTS"' class="button-no" v-on:click_1='control()'></Button>
       <br>
       <br>
       <br>
-      <input type='submit' value='Power on' class='button button-on' v-on:click='handlePower("on")'>
-      <br>
-      <br>
-      <br>
-      <input type='submit' value='Power off' class='button button-off' v-on:click='handlePower("off")'>
+      <div class='power-toggle'>
+        <div class='toggle-title'>조명 전원</div>
+        <ToggleSwitch v-bind:toggleId='toggleId' v-bind:check='check' v-on:toggle_0='toggle()'></ToggleSwitch>
+        <div>{{onOff}}</div>
+      </div>
     </center>
     <!-- Simple audio playback -->
     <audio src='http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg' autoplay>
@@ -26,20 +26,35 @@
 
 <script>
 /* eslint-disable */
+import Button from '@/components/interfaces/Button'
+import ToggleSwitch from '@/components/interfaces/ToggleSwitch'
 export default {
   name: 'Index',
+  components: {
+    Button,
+    ToggleSwitch
+  },
+  mounted: function () {
+    // TODO modify API request
+    if (this.onOff == 'on') {
+      this.check = true
+    } else {
+      this.check = false
+    }
+  },
   data () {
     return {
-      options: { }
+      options: { },
+      toggleId: 0,
+      check: false
     }
   },
   methods: {
     init: function () {
       this.options = { }
 
-      this.options.apikey = 'RTUwMDEwNzR8R0JPWERFVk18MTUxNTAzMjA5MTAxNQ=='
-      this.options.keytype = 'GBOXDEVM'
-      // this.options.keytype='GBOXCOMM'
+      this.options.apikey = this.apiKey
+      this.options.keytype = this.keyType
 
       gigagenie.init(this.options, function (code, message, extra) {
         if (code === 200) {
@@ -48,8 +63,10 @@ export default {
       })
     },
     control: function () {
+      alert('음성인식 시작')
+
       var options = { }
-      options.voicelanguage = 1
+      // options.voicelanguage = 1
 
       gigagenie.voice.getVoiceText(options, function (code, message, extra) {
         if (code === 200) {
@@ -74,13 +91,17 @@ export default {
         }
       })
     },
-    handlePower: function (onoff) {
-      alert('turn ' + onoff + ' the light')
+    toggle: function () {
+      this.$store.dispatch('togglePower')
+      this.handlePower()
+    },
+    handlePower: function () {
+      alert('turn ' + this.onOff + ' the light')
 
       const baseURI = this.baseURI
 
       var body = { }
-      body.onoff = onoff
+      body.onoff = this.onOff
 
       this.$http.put(
         `${baseURI}/api/device/4/light`,
@@ -97,8 +118,17 @@ export default {
     }
   },
   computed: {
+    apiKey: function () {
+      return this.$store.getters.apiKey
+    },
+    keyType: function () {
+      return this.$stroe.getters.keyType
+    },
     baseURI: function () {
       return this.$store.getters.baseURI
+    },
+    onOff: function () {
+      return this.$store.getters.onOff
     }
   }
 }
@@ -106,17 +136,6 @@ export default {
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->
 <style scoped>
-.button {
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  border-radius: 4px;
-}
-
 .button-yes {
   background-color: #4CAF50; /* Green */
 }
@@ -133,4 +152,13 @@ export default {
   background-color: #555555; /* Gray */
 }
 
+/* Hoverable Buttons */
+.button {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.button:hover {
+    background-color: #e7e7e7; /* Green */
+    color: white;
+}
 </style>
