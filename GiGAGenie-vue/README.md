@@ -1,4 +1,4 @@
-# gigagenie-vue
+# GiGAGenie-vue
 
 > A Vue.js project
 

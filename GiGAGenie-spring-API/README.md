@@ -1,2 +1,2 @@
-# GiGAGenie-express-ejs
+# GiGAGenie-spring-API
 KT GiGAGenie smarthome light
