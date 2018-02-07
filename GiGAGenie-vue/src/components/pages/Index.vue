@@ -113,7 +113,9 @@ export default {
       })
       .catch((error) => {
         console.log(error)
+        console.log(error.stack)
         alert(error)
+        //alert(error.stack)
       })
     }
   },

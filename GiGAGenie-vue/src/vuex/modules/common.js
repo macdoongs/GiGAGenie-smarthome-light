@@ -4,7 +4,7 @@ const state = {
   apiKey: 'RTUwMDEwNzR8R0JPWERFVk18MTUxNTAzMjA5MTAxNQ==',
   keyType: 'GBOXDEVM',
   // keytype: 'GBOXCOMM',
-  baseURI: 'http://localhost:4000',
+  baseURI: 'http://localhost:8080',
   onOff: 'off'
 }
 

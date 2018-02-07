@@ -16,7 +16,7 @@ public class GatewayServiceImpl implements GatewayService{
 	private static List<Gateway> gateways;
 	
 	static {
-		gateways= setDummyGateways();
+		//gateways= setDummyGateways();
 	}
 	
 
@@ -75,14 +75,16 @@ public class GatewayServiceImpl implements GatewayService{
 	
 	
 	private static List<Gateway> setDummyGateways(){
-		String ip = "";
-		String port = "";
+		int gatewayNum = 8;
+		String ip = "13.124.195.114";
+		String port = "9000";
 		
         List<Gateway> gateways = new ArrayList<Gateway>();
         
-        gateways.add(new Gateway(counter.incrementAndGet(), ip, port));
-        gateways.add(new Gateway(counter.incrementAndGet(), ip, port));
-        gateways.add(new Gateway(counter.incrementAndGet(), ip, port));
+        gateways.add(new Gateway(gatewayNum, ip, port));
+        gateways.add(new Gateway(counter.incrementAndGet(), "192.168.0.2", "8080"));
+        gateways.add(new Gateway(counter.incrementAndGet(), "192.168.0.3", "8080"));
+        gateways.add(new Gateway(counter.incrementAndGet(), "192.168.0.4", "8080"));
         
         return gateways;
     }
