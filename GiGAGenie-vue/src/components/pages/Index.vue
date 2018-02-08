@@ -34,13 +34,18 @@ export default {
     Button,
     ToggleSwitch
   },
-  mounted: function () {
+  beforeMount: function () {
     // TODO modify API request
     if (this.onOff == 'on') {
       this.check = true
     } else {
       this.check = false
     }
+  },
+  mounted : function () {
+    this.$nextTick(function () {
+      this.init()
+    })
   },
   data () {
     return {
@@ -55,9 +60,12 @@ export default {
 
       this.options.apikey = this.apiKey
       this.options.keytype = this.keyType
+      //console.log('init');
+      //alert('init')
 
       gigagenie.init(this.options, function (code, message, extra) {
         if (code === 200) {
+          alert('Initialize Success')
           console.log('Initialize Success')
         }
       })
@@ -124,7 +132,7 @@ export default {
       return this.$store.getters.apiKey
     },
     keyType: function () {
-      return this.$stroe.getters.keyType
+      return this.$store.getters.keyType
     },
     baseURI: function () {
       return this.$store.getters.baseURI
