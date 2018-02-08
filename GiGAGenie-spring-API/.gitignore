@@ -15,6 +15,15 @@
 *.iws
 *.iml
 *.ipr
+projectName.iml
+/*.classpath
+/.classpath
+/.springBeans
+*.DS_Store
+*.iml
+/build
+/local.properties
+target/
 
 ### NetBeans ###
 nbproject/private/

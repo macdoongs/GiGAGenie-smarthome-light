@@ -3,6 +3,10 @@ package com.etri.sl.controllers;
 import java.util.List;
 import java.util.Map;
 
+import com.ibm.watson.developer_cloud.conversation.v1.Conversation;
+import com.ibm.watson.developer_cloud.conversation.v1.model.InputData;
+import com.ibm.watson.developer_cloud.conversation.v1.model.MessageOptions;
+import com.ibm.watson.developer_cloud.conversation.v1.model.MessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,25 @@ public class RestAPIController {
     @Autowired
     GatewayService gatewayService; //Service which will do all data retrieval/manipulation work
 
+    
+    // -------------------IBM Watson conversation API---------------------------------------------
+    
+    @RequestMapping(value = "/watson", method = RequestMethod.GET)
+    public @ResponseBody String UnderstandText() {
+    	Conversation service = new Conversation(Conversation.VERSION_DATE_2017_05_26);
+    	service.setUsernameAndPassword("username", "password");
+		service.setEndPoint("https://gateway.watsonplatform.net/conversation/api");
+
+    	InputData input = new InputData.Builder("Hi").build();
+    	MessageOptions options = new MessageOptions.Builder("workspaceId").input(input).build();
+    	MessageResponse response = service.message(options).execute();
+    	System.out.println(response);
+
+    	return response.toString();
+    	
+    }
+    
+    
     // -------------------Load Gateway list---------------------------------------------
     
     @RequestMapping(value = "/gateway/0/discovery", method = RequestMethod.GET)
