@@ -1,6 +1,5 @@
 package com.etri.sl.controllers;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.etri.sl.configs.Config;
+import com.etri.sl.models.Action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.watson.developer_cloud.conversation.v1.Conversation;
 import com.ibm.watson.developer_cloud.conversation.v1.model.Context;
@@ -43,25 +43,25 @@ import com.etri.sl.services.GatewayService;
 @RestController
 @RequestMapping("/api")
 public class RestAPIController {
-	RestTemplate restTemplate = new RestTemplate();
+	private RestTemplate restTemplate = new RestTemplate();
 
     public static final Logger logger = LoggerFactory.getLogger(RestAPIController.class);
 
-    final AmazonDynamoDB ddb = AmazonDynamoDBClientBuilder.standard()
+    private final AmazonDynamoDB ddb = AmazonDynamoDBClientBuilder.standard()
             .withRegion(Regions.AP_NORTHEAST_2)
             .withCredentials(new ProfileCredentialsProvider(Config.profile))
             .build();
 
-    DynamoDB dynamoDB = new DynamoDB(ddb);
-    ObjectMapper mapper = new ObjectMapper();
+    private DynamoDB dynamoDB = new DynamoDB(ddb);
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
-    GatewayService gatewayService; //Service which will do all data retrieval/manipulation work
+    private GatewayService gatewayService; //Service which will do all data retrieval/manipulation work
 
 
     // -------------------IBM Watson conversation API---------------------------------------------
 
-    @RequestMapping(value = "/watson/{wid}", method = RequestMethod.POST)
+    @RequestMapping(value = "/watson/{wid}", method = RequestMethod.POST, produces = "application/json; charset=utf8")
     public @ResponseBody String UnderstandText(@PathVariable("wid") String wid, @RequestBody String data) {
 
 
@@ -81,7 +81,7 @@ public class RestAPIController {
             Item item = table.getItem("id", wid);
 
             System.out.println("Printing item after retrieving it....");
-            System.out.println("item : " + item.toJSONPretty());
+            //System.out.println("item : " + item.toJSONPretty());
 
             Object o = item.get("context");
 
@@ -116,7 +116,7 @@ public class RestAPIController {
 
         context = response.getContext();
 
-        System.out.println("\n" + context);
+        //System.out.println("\n" + context);
 
         if(isFirst){
             //System.out.println("first");
@@ -134,7 +134,7 @@ public class RestAPIController {
                 System.err.println(e.getMessage());
                 System.exit(1);
             }
-        }else{
+        }else {
             //System.out.println("not first");
             UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(Config.keyName, wid)
                     .withUpdateExpression("set context = :c")
@@ -155,17 +155,49 @@ public class RestAPIController {
             }
         }
 
-        String message = "";
-        if(response.getOutput().getText().isEmpty()){
+        if(response.getOutput().containsKey("action")){
+            Object o = response.getOutput().get("action");
+            Action action;
 
-        }else{
-             message = response.getOutput().getText().get(0);
+            try{
+                String actionStr = mapper.writeValueAsString(o);
+
+                System.out.println("actionStr : " + actionStr);
+
+                action = mapper.readValue(actionStr, Action.class);
+
+                String name = action.getName();
+                if(name.equals("load")){
+                    System.out.println("load");
+                }else if(name.equals("turn_on")){
+                    System.out.println("turn_on");
+                }else if(name.equals("turn_off")){
+                    System.out.println("turn_off");
+                }else if(name.equals("set")){
+                    System.out.println("set");
+                } else if (name.equals("adjust")) {
+                    System.out.println("adjust");
+                }
+            }catch (Exception e){
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
+
         }
+
+
+
+
+
+        String message = "";
+        if(!response.getOutput().getText().isEmpty()){
+            message = response.getOutput().getText().get(0);
+        }
+
 
         //System.out.println(response);
 
     	return message;
-
     }
 
 

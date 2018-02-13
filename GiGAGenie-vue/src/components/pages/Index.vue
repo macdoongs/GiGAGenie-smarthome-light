@@ -9,13 +9,6 @@
       <br>
       <br>
       <br>
-      <div class='power-toggle'>
-        <div class='toggle-title'>조명 전원</div>
-        <ToggleSwitch v-bind:toggleId='toggleId' v-bind:check='check' v-on:toggle_0='toggle()'></ToggleSwitch>
-        <div>{{onOff}}</div>
-      </div>
-      <br>
-      <br>
       <br>
       <input v-model="wid" placeholder="테스트 ID">
       <br>
@@ -80,13 +73,13 @@ export default {
 
       this.options.apikey = this.apiKey
       this.options.keytype = this.keyType
-      //console.log('init');
-      //alert('init')
+      // console.log('init');
+      // alert('init')
 
       gigagenie.init(this.options, function (code, message, extra) {
         if (code === 200) {
-          alert('Initialize Success')
-          console.log('Initialize Success')
+          // alert('Initialize Success')
+          // console.log('Initialize Success')
         }
       })
     },
@@ -126,7 +119,7 @@ export default {
         console.log(error)
         console.log(error.stack)
         alert(error)
-        //alert(error.stack)
+        // alert(error.stack)
       })
     },
     stopTTS: function () {
@@ -161,14 +154,14 @@ export default {
         body
       )
       .then((response) => {
-        console.log(response.data)
-        alert(response.data.message)
+        // console.log(response.data)
+        // alert(response.data.message)
       })
       .catch((error) => {
-        console.log(error)
-        console.log(error.stack)
+        // console.log(error)
+        // console.log(error.stack)
         alert(error)
-        //alert(error.stack)
+        // alert(error.stack)
       })
     }
   },
