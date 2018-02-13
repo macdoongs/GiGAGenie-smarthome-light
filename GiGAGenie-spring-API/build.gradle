@@ -7,6 +7,7 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE")
 	}
 }
 
@@ -14,6 +15,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
+apply plugin: "io.spring.dependency-management"
 
 group = 'com.etri'
 version = '0.0.1-SNAPSHOT'
@@ -27,14 +29,25 @@ war {
 repositories {
 	mavenCentral()
 	jcenter()
-	maven { url "http://repo.spring.io/libs-snapshot" }
+	maven { url "http://repo.spring.io/libs-snapshot"}
 }
 
+
+dependencyManagement {
+	imports {
+		mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.275'
+	}
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('com.ibm.watson.developer_cloud:conversation:4.2.1')
+    // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
+    compile(group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.11.275')
+    compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.10')
 
+
+    testCompile(group: 'junit', name: 'junit', version: '4.12')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 
 	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")

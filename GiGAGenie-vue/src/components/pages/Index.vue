@@ -14,13 +14,29 @@
         <ToggleSwitch v-bind:toggleId='toggleId' v-bind:check='check' v-on:toggle_0='toggle()'></ToggleSwitch>
         <div>{{onOff}}</div>
       </div>
+      <br>
+      <br>
+      <br>
+      <input v-model="wid" placeholder="테스트 ID">
+      <br>
+      <br>
+      <br>
+      <input v-model="inputText" placeholder="여기를 수정해보세요">
+      <br>
+      <br>
+      <br>
+      <Button v-bind:buttonId='2' v-bind:value='"Watson"' class="button-off" v-on:click_2='interactWatson()'></Button>
+      <br>
+      <br>
+      <span style="font-size:50px;">{{inputText}}</span>
+      <br>
+      <br>
+      <br>
+      <span style="font-size:50px; font-color:red">{{outputText}}</span>
+      <br>
+      <br>
+      <br>
     </center>
-    <!-- Simple audio playback -->
-    <audio src='http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg' autoplay>
-      Your browser does not support the
-      <code>audio</code>
-      element.
-    </audio>
   </div>
 </template>
 
@@ -45,13 +61,17 @@ export default {
   mounted : function () {
     this.$nextTick(function () {
       this.init()
+      this.interactWatson()
     })
   },
   data () {
     return {
       options: { },
       toggleId: 0,
-      check: false
+      check: false,
+      inputText: "",
+      outputText: "",
+      wid: "test"
     }
   },
   methods: {
@@ -78,10 +98,35 @@ export default {
 
       gigagenie.voice.getVoiceText(options, function (code, message, extra) {
         if (code === 200) {
-          alert('command : ' + extra.voicetext)
+          this.inputText = extra.voicetext;
+          // alert('command : ' + extra.voicetext)
         } else {
           alert('다시해보세요')
         }
+      })
+    },
+    interactWatson: function () {
+      this.outputText = "watson..."
+
+      const wid = this.wid
+      const baseURI = this.baseURI
+
+      var body = { }
+
+      body.inputText = this.inputText
+
+      this.$http.post(
+        `${baseURI}/api/watson/${wid}`,
+        body
+      )
+      .then((response) => {
+        this.outputText = response.data
+      })
+      .catch((error) => {
+        console.log(error)
+        console.log(error.stack)
+        alert(error)
+        //alert(error.stack)
       })
     },
     stopTTS: function () {
