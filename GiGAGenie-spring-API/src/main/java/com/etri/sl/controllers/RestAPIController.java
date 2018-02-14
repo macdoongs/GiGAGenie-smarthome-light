@@ -192,101 +192,149 @@ public class RestAPIController {
 
             url += "/" + unit + "/" + unitId + "/light";
 
-            if(name.equals(Config.ACTION_LOAD)){
-                System.out.println("load");
+            ResponseEntity<String> responseEntity;
+            HttpEntity<Map> entity;
 
-                System.out.println(unit + " " + unitId);
+            switch (name){
+                case Config.ACTION_LOAD:{
+                    System.out.println("load");
 
-                if(unitId == 0){
-                    url = Config.BASE_URI + "/" + unit;
-                }else{
-                    url = Config.BASE_URI + "/" + unit + "/" + unitId;
+                    System.out.println(unit + " " + unitId);
+
+                    if(unitId == 0){
+                        url = Config.BASE_URI + "/" + unit;
+                    }else{
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId;
+                    }
+
+                    method = HttpMethod.GET;
+
+                    entity = new HttpEntity<>(body, headers);
+
+                    responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
+
+                    System.out.println(responseEntity.toString());
+
+                    message = responseEntity.getBody();
+/*
+                    try {
+                        JsonNode jsonNode = mapper.readTree(message);
+
+                        switch (unit){
+                            case
+                        }
+                        String jsonNode.get(ConstantData.RESULT_DATA).get()
+                    }catch (Exception e){
+
+                    }
+
+*/
+                    break;
                 }
+                case Config.ACTION_TURN_ON:{
+                    System.out.println("turn_on");
 
-                method = HttpMethod.GET;
-            }else if(name.equals(Config.ACTION_TURN_ON)){
-                System.out.println("turn_on");
+                    body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_ON);
 
-                body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_ON);
-            }else if(name.equals(Config.ACTION_TURN_OFF)){
-                System.out.println("turn_off");
+                    entity = new HttpEntity<>(body, headers);
 
-                body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_OFF);
-            }else if(name.equals(Config.ACTION_SET)){
-                System.out.println("set");
+                    responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
+                    System.out.println(responseEntity.toString());
 
-                String attribute = action.getAttribute();
-                String value = action.getValue();
-
-                if(attribute.equals("brightness")){
-                    attribute = ConstantData.BODY_LEVEL;
-                }else if(attribute.equals("color")){
-                    // TODO Change color name (value variable) to RGB value
+                    message = responseEntity.getBody();
+                    break;
                 }
+                case Config.ACTION_TURN_OFF:{
+                    System.out.println("turn_off");
 
-                body.put(attribute, value);
-            } else if (name.equals(Config.ACTION_ADJUST)) {
-                System.out.println("adjust");
+                    body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_OFF);
 
-                String command = action.getCommand();
-                String attribute = action.getAttribute();
+                    entity = new HttpEntity<>(body, headers);
 
-                url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
+                    responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
-                // TODO get value and change
+                    System.out.println(responseEntity.toString());
 
-                ResponseEntity<String> responseEntity;
-
-
-                HttpEntity<Map> entity = new HttpEntity<>(body, headers);
-
-                method = HttpMethod.GET;
-
-                responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
-
-                System.out.println(responseEntity.toString());
-
-                Double value = 0.0;
-
-                try{
-                    String json = responseEntity.getBody();
-
-                    JsonNode jsonNode = mapper.readTree(json);
-
-                    value = jsonNode.get(ConstantData.RESULT_DATA).get(attribute).doubleValue();
-
-                }catch (Exception e){
-                    System.err.println(e.getMessage());
-                    System.exit(6);
+                    message = responseEntity.getBody();
+                    break;
                 }
+                case Config.ACTION_SET:{
+                    System.out.println("set");
 
-                if(command.equals(ConstantData.INCREASE_CMD)){
-                    value = Math.floor(value * ConstantData.INCREASE_RATE);
-                }else if(command.equals(ConstantData.DECREASE_CMD)){
-                    value = Math.floor(value * ConstantData.DECREASE_RASE);
+
+                    String attribute = action.getAttribute();
+                    String value = action.getValue();
+
+                    if(attribute.equals("brightness")){
+                        attribute = ConstantData.BODY_LEVEL;
+                    }else if(attribute.equals("color")){
+                        // TODO Change color name (value variable) to RGB value
+                    }
+
+                    body.put(attribute, value);
+
+                    entity = new HttpEntity<>(body, headers);
+
+                    responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
+
+                    System.out.println(responseEntity.toString());
+
+                    message = responseEntity.getBody();
+                    break;
                 }
+                case Config.ACTION_ADJUST:{
+                    System.out.println("adjust");
 
-                body.put(attribute, "" + value.intValue());
+                    String command = action.getCommand();
+                    String attribute = action.getAttribute();
 
-                method = HttpMethod.PUT;
+                    url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
 
-                System.out.println(message);
+                    entity = new HttpEntity<>(body, headers);
+
+                    method = HttpMethod.GET;
+
+                    responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
+
+                    System.out.println(responseEntity.toString());
+
+                    Double value = 0.0;
+
+                    try{
+                        String json = responseEntity.getBody();
+
+                        JsonNode jsonNode = mapper.readTree(json);
+
+                        value = jsonNode.get(ConstantData.RESULT_DATA).get(attribute).doubleValue();
+                    }catch (Exception e){
+                        System.err.println(e.getMessage());
+                        System.exit(6);
+                    }
+
+                    if(command.equals(ConstantData.INCREASE_CMD)){
+                        value = Math.floor(value * ConstantData.INCREASE_RATE);
+                    }else if(command.equals(ConstantData.DECREASE_CMD)){
+                        value = Math.floor(value * ConstantData.DECREASE_RATE);
+                    }
+
+                    body.put(attribute, "" + value.intValue());
+
+                    method = HttpMethod.PUT;
+
+                    System.out.println(message);
+
+                    entity = new HttpEntity<>(body, headers);
+
+                    responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
+
+                    break;
+                }
+                default:{
+                    break;
+                }
             }
 
-            System.out.println(body);
-
-
-            ResponseEntity<String> responseEntity;
-
-
-            HttpEntity<Map> entity = new HttpEntity<Map>(body, headers);
-
-            responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
-
-            System.out.println(responseEntity.toString());
-
-            message = responseEntity.getBody();
         }
 
 
