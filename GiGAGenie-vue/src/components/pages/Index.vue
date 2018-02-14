@@ -18,7 +18,7 @@
       <br>
       <br>
       <br>
-      <Button v-bind:buttonId='2' v-bind:value='"전송"' class="button-off" v-on:click_2='interactWatson()'></Button>
+      <Button v-bind:buttonId='2' v-bind:value='"전송"' class="button-off" v-on:click_2='interactWatson(inputText)'></Button>
       <br>
       <br>
       <span style="font-size:50px;">{{inputText}}</span>
@@ -54,7 +54,7 @@ export default {
   mounted : function () {
     this.$nextTick(function () {
       this.init()
-      this.interactWatson()
+      this.interactWatson(this.inputText)
     })
   },
   data () {
@@ -89,16 +89,17 @@ export default {
       var options = { }
       // options.voicelanguage = 1
 
-      gigagenie.voice.getVoiceText(options, function (code, message, extra) {
+      gigagenie.voice.getVoiceText(options, (function (code, message, extra) {
         if (code === 200) {
           this.inputText = extra.voicetext;
           // alert('command : ' + extra.voicetext)
+          this.interactWatson(extra.voicetext)
         } else {
           alert('다시해보세요')
         }
-      })
+      }).bind(this))
     },
-    interactWatson: function () {
+    interactWatson: function (inputText) {
       this.outputText = "watson..."
 
       const wid = this.wid
@@ -106,7 +107,7 @@ export default {
 
       var body = { }
 
-      body.inputText = this.inputText
+      body.inputText = inputText
 
       this.$http.post(
         `${baseURI}/api/watson/${wid}`,
@@ -115,6 +116,17 @@ export default {
       .then((response) => {
         this.outputText = response.data
         this.inputText = ""
+
+        var options = {}
+        options.ttstext = response.data
+
+        gigagenie.voice.sendTTS(options, (function(code, message, extra){
+          if (code === 200) {
+            this.control()
+          } else {
+            alert('잘 못 읽겠어요..')
+          }
+        }).bind(this))
       })
       .catch((error) => {
         console.log(error)
