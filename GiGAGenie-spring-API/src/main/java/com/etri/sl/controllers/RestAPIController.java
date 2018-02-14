@@ -190,7 +190,12 @@ public class RestAPIController {
             String unit = action.getUnit();
             int unitId = (int) action.getUnitId();
 
-            url += "/" + unit + "/" + unitId + "/light";
+            if(unit.equals("device")){
+                url += "/" + unit + "/" + unitId + "/light";
+            }else{
+                url += "/" + unit + "/" + unitId + "/status";
+            }
+
 
             ResponseEntity<String> responseEntity;
             HttpEntity<Map> entity;
@@ -210,6 +215,8 @@ public class RestAPIController {
                     method = HttpMethod.GET;
 
                     entity = new HttpEntity<>(body, headers);
+
+                    System.out.println(url + " " + body.toString());
 
                     responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
@@ -238,6 +245,8 @@ public class RestAPIController {
 
                     entity = new HttpEntity<>(body, headers);
 
+                    System.out.println(url + " " + body.toString());
+
                     responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
                     System.out.println(responseEntity.toString());
@@ -250,7 +259,10 @@ public class RestAPIController {
 
                     body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_OFF);
 
+
                     entity = new HttpEntity<>(body, headers);
+
+                    System.out.println(url + " " + body.toString());
 
                     responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
@@ -266,15 +278,21 @@ public class RestAPIController {
                     String attribute = action.getAttribute();
                     String value = action.getValue();
 
-                    if(attribute.equals("brightness")){
-                        attribute = ConstantData.BODY_LEVEL;
-                    }else if(attribute.equals("color")){
+                    if(attribute.equals("color")){
                         // TODO Change color name (value variable) to RGB value
+
+                    }else if(attribute.equals("brightness")){
+                        attribute = ConstantData.BODY_LEVEL;
+                    }else{
+
                     }
+                    // TODO remove floating point
 
                     body.put(attribute, value);
 
                     entity = new HttpEntity<>(body, headers);
+
+                    System.out.println(url + " " + body.toString());
 
                     responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
@@ -292,6 +310,8 @@ public class RestAPIController {
                     url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
 
                     entity = new HttpEntity<>(body, headers);
+
+                    System.out.println(url + " " + body.toString());
 
                     method = HttpMethod.GET;
 
@@ -325,6 +345,8 @@ public class RestAPIController {
                     System.out.println(message);
 
                     entity = new HttpEntity<>(body, headers);
+
+                    System.out.println(url + " " + body.toString());
 
                     responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
