@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div v-on:keyup.enter='interactWatson()'>
     <center>
-      <Button v-bind:buttonId='0' v-bind:value="'STOP TTS'" class="button-yes" v-on:click_0='stopTTS()'></Button>
+      <Button v-bind:buttonId='0' v-bind:value="'음성 인식 종료'" class="button-yes" v-on:click_0='stopTTS()'></Button>
       <br>
       <br>
       <br>
-      <Button v-bind:buttonId='1' v-bind:value='"START TTS"' class="button-no" v-on:click_1='control()'></Button>
+      <Button v-bind:buttonId='1' v-bind:value='"음성 인식 시작"' class="button-no" v-on:click_1='control()'></Button>
       <br>
       <br>
       <br>
@@ -14,11 +14,11 @@
       <br>
       <br>
       <br>
-      <input v-model="inputText" placeholder="여기를 수정해보세요">
+      <input v-model="inputText" placeholder="여기를 수정해보세요" autofocus>
       <br>
       <br>
       <br>
-      <Button v-bind:buttonId='2' v-bind:value='"Watson"' class="button-off" v-on:click_2='interactWatson()'></Button>
+      <Button v-bind:buttonId='2' v-bind:value='"전송"' class="button-off" v-on:click_2='interactWatson()'></Button>
       <br>
       <br>
       <span style="font-size:50px;">{{inputText}}</span>

@@ -9,21 +9,21 @@ export default {
     buttonId: {
       type: Number,
       validator: function (value) {
-        console.log(value)
+        // console.log(value)
         return true
       }
     },
     value: {
       type: String,
       validator: function (value) {
-        console.log(value)
+        // console.log(value)
         return true
       }
     },
     type: {
       type: String,
       validator: function (value) {
-        console.log(value)
+        // console.log(value)
         return true
       }
     }

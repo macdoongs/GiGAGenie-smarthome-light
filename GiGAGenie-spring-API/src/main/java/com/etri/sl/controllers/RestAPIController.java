@@ -1,5 +1,6 @@
 package com.etri.sl.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.etri.sl.configs.Config;
+import com.etri.sl.configs.ConstantData;
 import com.etri.sl.models.Action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.watson.developer_cloud.conversation.v1.Conversation;
@@ -49,7 +51,7 @@ public class RestAPIController {
 
     private final AmazonDynamoDB ddb = AmazonDynamoDBClientBuilder.standard()
             .withRegion(Regions.AP_NORTHEAST_2)
-            .withCredentials(new ProfileCredentialsProvider(Config.profile))
+            .withCredentials(new ProfileCredentialsProvider(Config.PROFILE))
             .build();
 
     private DynamoDB dynamoDB = new DynamoDB(ddb);
@@ -63,27 +65,27 @@ public class RestAPIController {
 
     @RequestMapping(value = "/watson/{wid}", method = RequestMethod.POST, produces = "application/json; charset=utf8")
     public @ResponseBody String UnderstandText(@PathVariable("wid") String wid, @RequestBody String data) {
-
+        String message = "";
 
     	Conversation service = new Conversation(Conversation.VERSION_DATE_2017_05_26);
-    	service.setUsernameAndPassword(Config.username, Config.password);
-    	service.setEndPoint(Config.endpoint);
+    	service.setUsernameAndPassword(Config.USERNAME, Config.PASSWORD);
+    	service.setEndPoint(Config.ENDPOINT);
 
         //System.err.println(data);
 
-        Table table = dynamoDB.getTable(Config.tableName);
+        Table table = dynamoDB.getTable(Config.TABLE_NAME);
 
 
         Context context = null;
         Boolean isFirst = false;
         try {
 
-            Item item = table.getItem("id", wid);
+            Item item = table.getItem(Config.KEY_NAME, wid);
 
             System.out.println("Printing item after retrieving it....");
             //System.out.println("item : " + item.toJSONPretty());
 
-            Object o = item.get("context");
+            Object o = item.get(Config.CONTEXT);
 
             //System.out.println("context : " + o.toString());
 
@@ -100,7 +102,7 @@ public class RestAPIController {
         }
 
         InputData input = new InputData.Builder(data).build();
-        MessageOptions options = new MessageOptions.Builder(Config.workspaceId)
+        MessageOptions options = new MessageOptions.Builder(Config.WORKSPACE_ID)
                 .input(input)
                 .context(context)
                 .build();
@@ -121,22 +123,22 @@ public class RestAPIController {
         if(isFirst){
             //System.out.println("first");
             Item item = new Item()
-                    .withPrimaryKey(Config.keyName, wid)
-                    .with("context", context);
+                    .withPrimaryKey(Config.KEY_NAME, wid)
+                    .with(Config.CONTEXT, context);
 
             try {
                 table.putItem(item);
             } catch (ResourceNotFoundException e) {
-                System.err.format("Error: The table \"%s\" can't be found.\n", Config.tableName);
+                System.err.format("Error: The table \"%s\" can't be found.\n", Config.TABLE_NAME);
                 System.err.println("Be sure that it exists and that you've typed its name correctly!");
                 System.exit(1);
             } catch (AmazonServiceException e) {
                 System.err.println(e.getMessage());
-                System.exit(1);
+                System.exit(2);
             }
         }else {
             //System.out.println("not first");
-            UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(Config.keyName, wid)
+            UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(Config.KEY_NAME, wid)
                     .withUpdateExpression("set context = :c")
                     .withValueMap(new ValueMap().with(":c", context))
                     .withReturnValues(ReturnValue.ALL_NEW);
@@ -146,18 +148,20 @@ public class RestAPIController {
                 UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
                 System.out.println("UpdateItem succeeded:\n" + outcome.getItem().toJSONPretty());
             } catch (ResourceNotFoundException e) {
-                System.err.format("Error: The table \"%s\" can't be found.\n", Config.tableName);
+                System.err.format("Error: The table \"%s\" can't be found.\n", Config.TABLE_NAME);
                 System.err.println("Be sure that it exists and that you've typed its name correctly!");
-                System.exit(1);
+                System.exit(3);
             } catch (AmazonServiceException e) {
                 System.err.println(e.getMessage());
-                System.exit(1);
+                System.exit(4);
             }
         }
 
         if(response.getOutput().containsKey("action")){
             Object o = response.getOutput().get("action");
-            Action action;
+            Action action = new Action();
+            String name = "";
+            String url = Config.BASE_URI;
 
             try{
                 String actionStr = mapper.writeValueAsString(o);
@@ -166,30 +170,102 @@ public class RestAPIController {
 
                 action = mapper.readValue(actionStr, Action.class);
 
-                String name = action.getName();
-                if(name.equals("load")){
-                    System.out.println("load");
-                }else if(name.equals("turn_on")){
-                    System.out.println("turn_on");
-                }else if(name.equals("turn_off")){
-                    System.out.println("turn_off");
-                }else if(name.equals("set")){
-                    System.out.println("set");
-                } else if (name.equals("adjust")) {
-                    System.out.println("adjust");
-                }
+                name = action.getName();
             }catch (Exception e){
                 System.err.println(e.getMessage());
-                System.exit(1);
+                System.exit(5);
             }
 
+            // HTTP request body
+            Map<String, String> body = new HashMap<>();
+
+            // HTTP request header
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpMethod method = HttpMethod.PUT;
+
+            String unit = action.getUnit();
+            int unitId = (int) action.getUnitId();
+
+            url += "/" + unit + "/" + unitId + "/light";
+
+            if(name.equals(Config.ACTION_LOAD)){
+                System.out.println("load");
+
+                System.out.println(unit + " " + unitId);
+
+                if(unitId == 0){
+                    url = Config.BASE_URI + "/" + unit;
+                }else{
+                    url = Config.BASE_URI + "/" + unit + "/" + unitId;
+                }
+
+                method = HttpMethod.GET;
+            }else if(name.equals(Config.ACTION_TURN_ON)){
+                System.out.println("turn_on");
+
+                body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_ON);
+            }else if(name.equals(Config.ACTION_TURN_OFF)){
+                System.out.println("turn_off");
+
+                body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_OFF);
+            }else if(name.equals(Config.ACTION_SET)){
+                System.out.println("set");
+
+
+                String attribute = action.getAttribute();
+                String value = action.getValue();
+
+                if(attribute.equals("brightness")){
+                    attribute = ConstantData.BODY_LEVEL;
+                }else if(attribute.equals("color")){
+                    // TODO Change color name (value variable) to RGB value
+                }
+
+                body.put(attribute, value);
+            } else if (name.equals(Config.ACTION_ADJUST)) {
+                System.out.println("adjust");
+
+                String command = action.getCommand();
+                String attribute = action.getAttribute();
+
+                url += "/" + unit + "/" + unitId + "/light";
+
+                // TODO get value and change
+
+                ResponseEntity<String> responseEntity;
+
+
+                HttpEntity<Map> entity = new HttpEntity<>(body, headers);
+
+                responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
+
+                System.out.println(responseEntity.toString());
+
+                message = responseEntity.getBody();
+
+                System.out.println(message);
+
+            }
+
+
+            System.out.println(body);
+
+
+            ResponseEntity<String> responseEntity;
+
+
+            HttpEntity<Map> entity = new HttpEntity<Map>(body, headers);
+
+            responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
+
+            System.out.println(responseEntity.toString());
+
+            message = responseEntity.getBody();
         }
 
 
-
-
-
-        String message = "";
         if(!response.getOutput().getText().isEmpty()){
             message = response.getOutput().getText().get(0);
         }
