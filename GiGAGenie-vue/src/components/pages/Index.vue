@@ -114,6 +114,7 @@ export default {
       )
       .then((response) => {
         this.outputText = response.data
+        this.inputText = ""
       })
       .catch((error) => {
         console.log(error)

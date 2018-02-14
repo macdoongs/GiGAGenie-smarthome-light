@@ -17,6 +17,8 @@ import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.etri.sl.configs.Config;
 import com.etri.sl.configs.ConstantData;
 import com.etri.sl.models.Action;
+import com.etri.sl.models.GWResponse;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.watson.developer_cloud.conversation.v1.Conversation;
 import com.ibm.watson.developer_cloud.conversation.v1.model.Context;
@@ -230,7 +232,7 @@ public class RestAPIController {
                 String command = action.getCommand();
                 String attribute = action.getAttribute();
 
-                url += "/" + unit + "/" + unitId + "/light";
+                url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
 
                 // TODO get value and change
 
@@ -239,16 +241,38 @@ public class RestAPIController {
 
                 HttpEntity<Map> entity = new HttpEntity<>(body, headers);
 
+                method = HttpMethod.GET;
+
                 responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
                 System.out.println(responseEntity.toString());
 
-                message = responseEntity.getBody();
+                Double value = 0.0;
+
+                try{
+                    String json = responseEntity.getBody();
+
+                    JsonNode jsonNode = mapper.readTree(json);
+
+                    value = jsonNode.get(ConstantData.RESULT_DATA).get(attribute).doubleValue();
+
+                }catch (Exception e){
+                    System.err.println(e.getMessage());
+                    System.exit(6);
+                }
+
+                if(command.equals(ConstantData.INCREASE_CMD)){
+                    value = Math.floor(value * ConstantData.INCREASE_RATE);
+                }else if(command.equals(ConstantData.DECREASE_CMD)){
+                    value = Math.floor(value * ConstantData.DECREASE_RASE);
+                }
+
+                body.put(attribute, "" + value.intValue());
+
+                method = HttpMethod.PUT;
 
                 System.out.println(message);
-
             }
-
 
             System.out.println(body);
 
