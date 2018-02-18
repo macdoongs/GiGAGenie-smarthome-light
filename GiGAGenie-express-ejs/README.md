@@ -1,2 +1,0 @@
-# GiGAGenie-express-ejs
-KT GiGAGenie smarthome light

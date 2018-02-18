@@ -5,7 +5,8 @@ public class Action {
     private String unit;
     private float unitId;
     private String attribute;
-    private String value;
+    private float value;
+    private String color;
     private String command;
 
     public String getName() {
@@ -40,12 +41,20 @@ public class Action {
         this.attribute = attribute;
     }
 
-    public String getValue() {
+    public float getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(float value) {
         this.value = value;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public String getCommand() {

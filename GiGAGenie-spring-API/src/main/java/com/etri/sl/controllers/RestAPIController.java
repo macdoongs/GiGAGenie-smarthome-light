@@ -276,19 +276,26 @@ public class RestAPIController {
 
 
                     String attribute = action.getAttribute();
-                    String value = action.getValue();
+
+                    int value = 0;
+                    String color = "";
+
+
+                    if(attribute.equals("brightness")) {
+                        attribute = ConstantData.BODY_LEVEL;
+                    }
+
 
                     if(attribute.equals("color")){
+                        color = action.getColor();
                         // TODO Change color name (value variable) to RGB value
+                    }else {
+                        value = (int) action.getValue();
 
-                    }else if(attribute.equals("brightness")){
-                        attribute = ConstantData.BODY_LEVEL;
-                    }else{
-
+                        body.put(attribute, "" + value);
                     }
-                    // TODO remove floating point
 
-                    body.put(attribute, value);
+
 
                     entity = new HttpEntity<>(body, headers);
 
