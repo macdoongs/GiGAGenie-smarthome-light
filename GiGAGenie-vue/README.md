@@ -1,10 +1,27 @@
 # GiGAGenie-vue
 
+## System light 2.0
+
+### GiGAGenie service
+
+- Modify Config file
+  - src/vuex/modules/common.js.example -> src/vuex/modules/common.js
+- Vue test
+  ```
+    # install dependencies
+    npm install
+
+    # start dev pages
+    npm start
+  ```
+
+--------------------------------------------------
+
 > A Vue.js project
 
-## Build Setup
+#### Build Setup
 
-``` bash
+```
 # install dependencies
 npm install
 

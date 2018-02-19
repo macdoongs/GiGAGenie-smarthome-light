@@ -32,3 +32,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### Config ###
+# src/main/java/com/etri/sl/configs/Config.java

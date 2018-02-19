@@ -1,9 +1,12 @@
 import * as types from '../mutation-types'
 
 const state = {
-  apiKey: 'RTUwMDEwNzR8R0JPWERFVk18MTUxNTAzMjA5MTAxNQ==',
+  // KT GiGAGenie API
+  apiKey: 'RTUwMDEwNzR8R0JPWERFVk18MTUxNTAzMjA5MT******',
   keyType: 'GBOXDEVM',
-  // keytype: 'GBOXCOMM',
+  // keyType: 'GBOXCOMM',
+
+  // Spring API server
   baseURI: 'http://localhost:8080',
   onOff: 'off'
 }
