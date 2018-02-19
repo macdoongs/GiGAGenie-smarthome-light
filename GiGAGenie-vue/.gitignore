@@ -17,4 +17,4 @@ selenium-debug.log
 *.sln
 
 # Config
-# src/vuex/modules/common.js
+src/vuex/modules/common.js

@@ -34,4 +34,4 @@ nbdist/
 .nb-gradle/
 
 ### Config ###
-# src/main/java/com/etri/sl/configs/Config.java
+src/main/java/com/etri/sl/configs/Config.java
