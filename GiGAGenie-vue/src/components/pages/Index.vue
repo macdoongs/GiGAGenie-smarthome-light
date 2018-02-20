@@ -1,5 +1,5 @@
 <template>
-  <div v-on:keyup.enter='interactWatson()'>
+  <div v-on:keyup.enter='interactWatson(this.inputText)'>
     <center>
       <Button v-bind:buttonId='0' v-bind:value="'음성 인식 종료'" class="button-yes" v-on:click_0='stopTTS()'></Button>
       <br>
