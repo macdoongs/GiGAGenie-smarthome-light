@@ -190,12 +190,27 @@ public class RestAPIController {
             String unit = action.getUnit();
             int unitId = (int) action.getUnitId();
 
-            if(unit.equals("device")){
-                url += "/" + unit + "/" + unitId + "/light";
-            }else{
-                url += "/" + unit + "/" + unitId + "/status";
+            switch (unit){
+                case "device":{
+                    url += "/" + unit + "/" + unitId + "/light";
+                    break;
+                }
+                case "group":{
+                    url += "/" + unit + "/" + unitId + "/status";
+                    break;
+                }
+                case "uspace":{
+                    url += "/" + unit;
+                    break;
+                }
+                case "gateway":{
+                    url += "/" + unit + "/0/discovery";
+                    break;
+                }
+                default:{
+                    break;
+                }
             }
-
 
             ResponseEntity<String> responseEntity;
             HttpEntity<Map> entity;
@@ -207,9 +222,7 @@ public class RestAPIController {
                     System.out.println(unit + " " + unitId);
 
                     if(unitId == 0){
-                        url = Config.BASE_URI + "/" + unit;
-                    }else{
-                        url = Config.BASE_URI + "/" + unit + "/" + unitId;
+
                     }
 
                     method = HttpMethod.GET;

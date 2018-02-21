@@ -19,7 +19,7 @@ rem If you want to configure in here, put your keys
 rem echo Configure aws cli
 rem aws configure set AWS_ACCESS_KEY_ID <your acess key id>
 rem aws configure set AWS_SECRET_ACCESS_KEY <your secret access key here>
-rem aws configure set default.region eu-west-1
+rem aws configure set default.region ap-northeast-1
 
 echo Upload static web files
 call aws s3 sync %distPath% %s3Path%

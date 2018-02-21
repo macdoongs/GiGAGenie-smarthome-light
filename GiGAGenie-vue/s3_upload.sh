@@ -8,7 +8,7 @@ S3_PATH=s3://etri-system-light/web/
 
 # Build vue project
 echo "npm run build"
-# npm run build
+npm run build
 
 cd dist
 
@@ -17,7 +17,7 @@ cd dist
 # echo "Configure aws cli"
 # aws configure set AWS_ACCESS_KEY_ID <your acess key id>
 # aws configure set AWS_SECRET_ACCESS_KEY <your secret access key here>
-# aws configure set default.region eu-west-1
+# aws configure set default.region ap-northeast-1
 
 
 # Upload static web files to S3
