@@ -21,9 +21,10 @@
   ```
   - HTTP server를 통해 접근 가능
   - html 파일을 file:// 를 통해 테스트하는 것은 불가능
-- Build static web files and Upload AWS S3 for AWS CloudFront
-  - 프로젝트 빌드 후에 S3에 업로드한 후 CloudFront에 연결하여 이용 가능
+- S3 버킷 정적 호스팅 (S3 bucket - static web hosting)
+  - [Link](https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/user-guide/static-website-hosting.html) 참고
   - [AWS CLI](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-chap-welcome.html)를 활용하여 S3에 업로드할 수 있음
+    - [Link](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/using-s3-commands.html) 참고
     - 배치 파일 활용 방법
       - 프로젝트 내 s3_upload.bat 파일로 업로드 가능
     - 쉘 스크립트 파일 활용 방법
@@ -32,6 +33,9 @@
       ```
         sudo chmod +x s3_upload.sh
       ```
+- Build static web files and Upload AWS S3 for AWS CloudFront
+  - 프로젝트 빌드 후에 S3에 업로드한 후 CloudFront에 연결하여 이용 가능
+
 
 
 --------------------------------------------------

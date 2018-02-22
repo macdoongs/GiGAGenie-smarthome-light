@@ -1,16 +1,16 @@
 <template>
   <div v-on:keyup.enter='interactWatson(inputText)'>
     <center>
-      <Button v-bind:buttonId='0' v-bind:value="'음성 인식 종료'" class="button-yes" v-on:click_0='stopTTS()'></Button>
+      <Button v-bind:buttonId='0' v-bind:value="'음성 인식 종료'" class="button-no" v-on:click_0='stopTTS()'></Button>
       <br>
       <br>
       <br>
-      <Button v-bind:buttonId='1' v-bind:value='"음성 인식 시작"' class="button-no" v-on:click_1='control()'></Button>
+      <Button v-bind:buttonId='1' v-bind:value='"음성 인식 시작"' class="button-yes" v-on:click_1='control()'></Button>
       <br>
       <br>
       <br>
       <br>
-      <input v-model="wid" placeholder="테스트 ID">
+      <!--<input v-model="wid" placeholder="테스트 ID">-->
       <br>
       <br>
       <br>
@@ -21,11 +21,11 @@
       <Button v-bind:buttonId='2' v-bind:value='"전송"' class="button-off" v-on:click_2='interactWatson(inputText)'></Button>
       <br>
       <br>
-      <span style="font-size:50px;">{{inputText}}</span>
+      <span style="font-size:50px; font-color:white;">{{inputText}}</span>
       <br>
       <br>
       <br>
-      <span style="font-size:50px; font-color:red">{{outputText}}</span>
+      <span style="font-size:50px; font-color:white;">{{outputText}}</span>
       <br>
       <br>
       <br>
@@ -44,17 +44,11 @@ export default {
     ToggleSwitch
   },
   beforeMount: function () {
-    // TODO modify API request
-    if (this.onOff == 'on') {
-      this.check = true
-    } else {
-      this.check = false
-    }
+    this.randomString()
   },
   mounted : function () {
     this.$nextTick(function () {
       this.init()
-      this.interactWatson(this.inputText)
     })
   },
   data () {
@@ -76,12 +70,17 @@ export default {
       // console.log('init');
       // alert('init')
 
-      gigagenie.init(this.options, function (code, message, extra) {
+      this.interactWatson(this.inputText)
+
+      gigagenie.init(this.options, (function (code, message, extra) {
         if (code === 200) {
           // alert('Initialize Success')
           // console.log('Initialize Success')
+        } else {
+          // alert('Initialize Failure')
+          // console.log('Initialize Failure')
         }
-      })
+      }).bind(this))
     },
     control: function () {
       alert('음성인식 시작')
@@ -176,6 +175,17 @@ export default {
         alert(error)
         // alert(error.stack)
       })
+    },
+    randomString: function () {
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      var num = 8;
+
+      this.wid = ""
+      for( var i=0; i < num; i++ ) {
+          this.wid += possible.charAt(Math.floor(Math.random() * possible.length))
+      }
+
+      return text;
     }
   },
   computed: {
@@ -197,6 +207,7 @@ export default {
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->
 <style scoped>
+
 .button-yes {
   background-color: #4CAF50; /* Green */
 }

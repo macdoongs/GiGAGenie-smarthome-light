@@ -23,8 +23,22 @@ public class ConstantData {
     public static final double DECREASE_RATE = 0.8;
 
     // IBM Watson conversation API
+    // Intent Action name
+    public static final String ACTION = "action";
+    public static final String ACTION_LOAD = "load";
+    public static final String ACTION_TURN_ON = "turn_on";
+    public static final String ACTION_TURN_OFF = "turn_off";
+    public static final String ACTION_SET = "set";
+    public static final String ACTION_ADJUST = "adjust";
+
+    // Entity
     public static final String INCREASE_CMD = "increase";
     public static final String DECREASE_CMD = "decrease";
+    public static final String DEVICE = "device";
+    public static final String USPACE = "uspace";
 
+    // Slot
+    public static final String BRIGHTNESS = "brightness";
+    public static final String COLOR = "color";
 
 }

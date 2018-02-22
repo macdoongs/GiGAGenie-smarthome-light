@@ -4,7 +4,7 @@ echo "GiGA Genie service shell script file start!"
 
 # TODO change
 # S3 Path
-S3_PATH=s3://etri-system-light/web/
+S3_PATH=s3://etri-system-light/
 
 # Build vue project
 echo "npm run build"
@@ -21,7 +21,8 @@ cd dist
 
 
 # Upload static web files to S3
+# public read option
 echo "Now uploading S3"
-aws s3 sync . $S3_PATH
+aws s3 sync . $S3_PATH --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
 cd ..

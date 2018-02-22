@@ -2,6 +2,7 @@ package com.etri.sl.models;
 
 public class Action {
     private String name;
+    private String uspace;
     private String unit;
     private float unitId;
     private String attribute;
@@ -15,6 +16,14 @@ public class Action {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUspace() {
+        return uspace;
+    }
+
+    public void setUspace(String uspace) {
+        this.uspace = uspace;
     }
 
     public String getUnit() {

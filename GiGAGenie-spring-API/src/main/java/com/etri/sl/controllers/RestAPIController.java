@@ -17,7 +17,6 @@ import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.etri.sl.configs.Config;
 import com.etri.sl.configs.ConstantData;
 import com.etri.sl.models.Action;
-import com.etri.sl.models.GWResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.watson.developer_cloud.conversation.v1.Conversation;
@@ -159,11 +158,13 @@ public class RestAPIController {
             }
         }
 
-        if(response.getOutput().containsKey("action")){
-            Object o = response.getOutput().get("action");
+        Boolean actionCheck = response.getOutput().containsKey(ConstantData.ACTION);
+
+        if(actionCheck){
+            Object o = response.getOutput().get(ConstantData.ACTION);
             Action action = new Action();
             String name = "";
-            String url = Config.BASE_URI;
+            String url = "";
 
             try{
                 String actionStr = mapper.writeValueAsString(o);
@@ -187,42 +188,49 @@ public class RestAPIController {
 
             HttpMethod method = HttpMethod.PUT;
 
-            String unit = action.getUnit();
-            int unitId = (int) action.getUnitId();
-
-            switch (unit){
-                case "device":{
-                    url += "/" + unit + "/" + unitId + "/light";
-                    break;
-                }
-                case "group":{
-                    url += "/" + unit + "/" + unitId + "/status";
-                    break;
-                }
-                case "uspace":{
-                    url += "/" + unit;
-                    break;
-                }
-                case "gateway":{
-                    url += "/" + unit + "/0/discovery";
-                    break;
-                }
-                default:{
-                    break;
-                }
-            }
-
             ResponseEntity<String> responseEntity;
             HttpEntity<Map> entity;
 
             switch (name){
-                case Config.ACTION_LOAD:{
+                case ConstantData.ACTION_LOAD:{
                     System.out.println("load");
 
-                    System.out.println(unit + " " + unitId);
+                    String uspace = action.getUspace();
+                    String unit = action.getUnit();
+                    int unitId = (int) action.getUnitId();
 
-                    if(unitId == 0){
+                    if(uspace != null && unit != null && unitId > 0){
+                        // Load unitspace unit unitId
+                        logger.info("1", uspace, unit, unitId);
+                    }else if(uspace != null && unit != null && unitId == 0){
+                        // Load unitspace unit
+                        logger.info("2", uspace, unit);
+                    }else if(uspace == null && unit != null && unitId > 0){
+                        // Load unit unitId
+                        logger.info("3", unit, unitId);
 
+                        if(unit.equals(ConstantData.DEVICE)){
+                            url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
+                        }else{
+                            url = Config.BASE_URI + "/" + unit + "/" + unitId + "/status";
+                        }
+                    }else if(uspace == null && unit != null && unitId == 0){
+                        // Load unit
+                        logger.info("4", unit);
+
+                        if(unit.equals(ConstantData.DEVICE)){
+                            url = Config.BASE_URI + "/" + unit;
+                        }else{
+                            url = Config.BASE_URI + "/" + unit;
+                        }
+                    }else{
+                        // Load unit space
+                        logger.info("5", uspace);
+                        if(uspace.equals(ConstantData.USPACE)){
+                            url = Config.BASE_URI + "/uspace";
+                        }else{
+                            // TODO handle uspace name
+                        }
                     }
 
                     method = HttpMethod.GET;
@@ -236,23 +244,22 @@ public class RestAPIController {
                     System.out.println(responseEntity.toString());
 
                     message = responseEntity.getBody();
-/*
-                    try {
-                        JsonNode jsonNode = mapper.readTree(message);
 
-                        switch (unit){
-                            case
-                        }
-                        String jsonNode.get(ConstantData.RESULT_DATA).get()
-                    }catch (Exception e){
-
-                    }
-
-*/
                     break;
                 }
-                case Config.ACTION_TURN_ON:{
+                case ConstantData.ACTION_TURN_ON:{
                     System.out.println("turn_on");
+
+                    // TODO modify unitspace part
+                    String uspace = action.getUspace();
+                    String unit = action.getUnit();
+                    int unitId = (int) action.getUnitId();
+
+                    if(unit.equals(ConstantData.DEVICE)){
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
+                    }else{
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId + "/status";
+                    }
 
                     body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_ON);
 
@@ -267,8 +274,19 @@ public class RestAPIController {
                     message = responseEntity.getBody();
                     break;
                 }
-                case Config.ACTION_TURN_OFF:{
+                case ConstantData.ACTION_TURN_OFF:{
                     System.out.println("turn_off");
+
+                    // TODO modify unitspace part
+                    String uspace = action.getUspace();
+                    String unit = action.getUnit();
+                    int unitId = (int) action.getUnitId();
+
+                    if(unit.equals(ConstantData.DEVICE)){
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
+                    }else{
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId + "/status";
+                    }
 
                     body.put(ConstantData.BODY_ONOFF, ConstantData.LIGHT_OFF);
 
@@ -284,9 +302,19 @@ public class RestAPIController {
                     message = responseEntity.getBody();
                     break;
                 }
-                case Config.ACTION_SET:{
+                case ConstantData.ACTION_SET:{
                     System.out.println("set");
 
+                    // TODO modify unitspace part
+                    String uspace = action.getUspace();
+                    String unit = action.getUnit();
+                    int unitId = (int) action.getUnitId();
+
+                    if(unit.equals(ConstantData.DEVICE)){
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
+                    }else{
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId + "/status";
+                    }
 
                     String attribute = action.getAttribute();
 
@@ -294,12 +322,12 @@ public class RestAPIController {
                     String color = "";
 
 
-                    if(attribute.equals("brightness")) {
+                    if(attribute.equals(ConstantData.BRIGHTNESS)) {
                         attribute = ConstantData.BODY_LEVEL;
                     }
 
 
-                    if(attribute.equals("color")){
+                    if(attribute.equals(ConstantData.COLOR)){
                         color = action.getColor();
                         // TODO Change color name (value variable) to RGB value
                     }else {
@@ -321,13 +349,22 @@ public class RestAPIController {
                     message = responseEntity.getBody();
                     break;
                 }
-                case Config.ACTION_ADJUST:{
+                case ConstantData.ACTION_ADJUST:{
                     System.out.println("adjust");
+
+                    // TODO modify unitspace part
+                    String uspace = action.getUspace();
+                    String unit = action.getUnit();
+                    int unitId = (int) action.getUnitId();
+
+                    if(unit.equals(ConstantData.DEVICE)){
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
+                    }else{
+                        url = Config.BASE_URI + "/" + unit + "/" + unitId + "/status";
+                    }
 
                     String command = action.getCommand();
                     String attribute = action.getAttribute();
-
-                    url = Config.BASE_URI + "/" + unit + "/" + unitId + "/light";
 
                     entity = new HttpEntity<>(body, headers);
 
@@ -380,7 +417,7 @@ public class RestAPIController {
         }
 
 
-        if(!response.getOutput().getText().isEmpty()){
+        if(!response.getOutput().getText().isEmpty() && !actionCheck){
             message = response.getOutput().getText().get(0);
         }
 

@@ -3,7 +3,7 @@ echo GiGA Genie service Batch File start!
 
 rem TODO change
 rem S3 Path
-set s3Path=s3://etri-system-light/web/
+set s3Path=s3://etri-system-light/
 rem Vue file path
 set distPath=./dist/
 
@@ -22,4 +22,5 @@ rem aws configure set AWS_SECRET_ACCESS_KEY <your secret access key here>
 rem aws configure set default.region ap-northeast-1
 
 echo Upload static web files
-call aws s3 sync %distPath% %s3Path%
+rem public read option
+call aws s3 sync %distPath% %s3Path% --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
