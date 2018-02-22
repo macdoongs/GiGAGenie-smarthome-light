@@ -9,7 +9,7 @@ public class ConstantData {
     public static final String LIGHT_OFF = "off";
 
     public static final String DEVICE_ID = "did";
-    public static final String GROUP_ID = "gid";
+    public static final String GROUP_ID = "gdid";
     public static final String USPACE_ID = "uid";
 
     // response
@@ -17,6 +17,11 @@ public class ConstantData {
     public static final String RESULT_MESSAGE = "result_msg";
     public static final String RESULT_DATA = "result_data";
 
+    public static final String DEVICE_LIST = "device_list";
+    public static final String GROUP_LIST = "group_list";
+    public static final String USPACE_LIST = "uspace_list";
+
+    public static final String L_USPACE_ID = "uspace_id";
 
     // Adjust
     public static final double INCREASE_RATE = 1.2;

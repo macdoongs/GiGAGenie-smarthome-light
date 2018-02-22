@@ -1,5 +1,6 @@
 package com.etri.sl.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,6 +245,44 @@ public class RestAPIController {
                     System.out.println(responseEntity.toString());
 
                     message = responseEntity.getBody();
+
+                    try{
+                        String json = responseEntity.getBody();
+
+                        JsonNode jsonNode = mapper.readTree(json);
+
+                        if(uspace != null && unit != null && unitId > 0){
+                            // Load unitspace unit unitId
+
+                        }else if(uspace != null && unit != null && unitId == 0){
+                            // Load unitspace unit
+                        }else if(uspace == null && unit != null && unitId > 0){
+                            // Load unit unitId
+                            if(unit.equals(ConstantData.DEVICE)){
+
+
+                            }else{
+
+                            }
+                        }else if(uspace == null && unit != null && unitId == 0){
+                            // Load unit
+                            if(unit.equals(ConstantData.DEVICE)){
+                                message = parsingList(jsonNode, ConstantData.DEVICE_LIST, ConstantData.DEVICE_ID);
+                            }else{
+                                message = parsingList(jsonNode, ConstantData.GROUP_LIST, ConstantData.GROUP_ID);
+                            }
+                        }else{
+                            // Load unit space
+                            message = parsingList(jsonNode, ConstantData.USPACE_LIST, ConstantData.L_USPACE_ID);
+                        }
+
+
+                    }catch (Exception e){
+                        System.err.println(e.getMessage());
+                        System.exit(6);
+                    }
+
+
 
                     break;
                 }
@@ -570,5 +609,54 @@ public class RestAPIController {
     	responseEntity = this.restTemplate.getForEntity(url, String.class, entity);
 
     	return responseEntity;
+    }
+
+    private String parsingList(JsonNode jsonNode, String listName, String idName){
+        String message;
+
+        JsonNode groupNode = jsonNode.get(ConstantData.RESULT_DATA).get(listName);
+
+        List<String> groupList = new ArrayList<>();
+
+        int length = groupNode.size();
+
+        String unitName = "";
+        switch (listName){
+            case ConstantData.DEVICE_LIST:{
+                unitName = "조명";
+                break;
+            }
+            case ConstantData.GROUP_LIST:{
+                unitName = "그룹";
+                break;
+            }
+            case ConstantData.USPACE_LIST:{
+                unitName = "단위 공간";
+                break;
+            }
+        }
+
+        if(length > 0){
+            message = unitName + "을 찾았습니다.";
+
+            if(listName.equals(ConstantData.USPACE_LIST)){
+                unitName = "";
+            }
+
+            for(int i = 0; i < length; i++){
+                groupList.add(i, unitName + " " + groupNode.get(i).get(idName));
+                if(i < length - 1){
+                    message += " " + groupList.get(i) + ",";
+                }else{
+                    message += " " + groupList.get(i) + "!";
+                }
+            }
+            message += "!";
+
+            logger.info(groupList.toString());
+        }else{
+            message = unitName + "이 없습니다.";
+        }
+        return message;
     }
 }
