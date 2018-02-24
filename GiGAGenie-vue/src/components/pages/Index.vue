@@ -1,5 +1,5 @@
 <template>
-  <div v-on:keyup.enter='interactWatson(inputText)'>
+  <div>
     <center>
       <Button v-bind:buttonId='0' v-bind:value="'음성 인식 종료'" class="button-no" v-on:click_0='stopTTS()'></Button>
       <br>
@@ -44,7 +44,7 @@ export default {
     ToggleSwitch
   },
   beforeMount: function () {
-    this.randomString()
+    this.wid = this.randomString()
   },
   mounted : function () {
     this.$nextTick(function () {
@@ -70,14 +70,13 @@ export default {
       // console.log('init');
       // alert('init')
 
-      this.interactWatson(this.inputText)
-
       gigagenie.init(this.options, (function (code, message, extra) {
         if (code === 200) {
-          // alert('Initialize Success')
+          alert('Initialize Success')
           // console.log('Initialize Success')
+          this.interactWatson(this.inputText)
         } else {
-          // alert('Initialize Failure')
+          alert('Initialize Failure')
           // console.log('Initialize Failure')
         }
       }).bind(this))
@@ -91,7 +90,7 @@ export default {
       gigagenie.voice.getVoiceText(options, (function (code, message, extra) {
         if (code === 200) {
           this.inputText = extra.voicetext;
-          // alert('command : ' + extra.voicetext)
+          alert('command : ' + extra.voicetext)
           this.interactWatson(extra.voicetext)
         } else {
           alert('다시해보세요')
@@ -180,9 +179,9 @@ export default {
       var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       var num = 8;
 
-      this.wid = ""
+      var text = ""
       for( var i=0; i < num; i++ ) {
-          this.wid += possible.charAt(Math.floor(Math.random() * possible.length))
+          text += possible.charAt(Math.floor(Math.random() * possible.length))
       }
 
       return text;
