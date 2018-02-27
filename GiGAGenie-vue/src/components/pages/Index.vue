@@ -90,7 +90,7 @@ export default {
       gigagenie.voice.getVoiceText(options, (function (code, message, extra) {
         if (code === 200) {
           this.inputText = extra.voicetext;
-          alert('command : ' + extra.voicetext)
+          // alert('command : ' + extra.voicetext)
           this.interactWatson(extra.voicetext)
         } else {
           alert('다시해보세요')
@@ -129,7 +129,7 @@ export default {
       .catch((error) => {
         console.log(error)
         console.log(error.stack)
-        alert(error)
+        // alert(error)
         // alert(error.stack)
       })
     },

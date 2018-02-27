@@ -64,7 +64,7 @@ public class RestAPIController {
 
 
     // -------------------IBM Watson conversation API---------------------------------------------
-
+    // Use only this route
     @RequestMapping(value = "/watson/{wid}", method = RequestMethod.POST, produces = "application/json; charset=utf8")
     public @ResponseBody String UnderstandText(@PathVariable("wid") String wid, @RequestBody String data) {
         String message = "";
@@ -308,9 +308,11 @@ public class RestAPIController {
 
                     responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
-                    System.out.println(responseEntity.toString());
+                    // System.out.println(responseEntity.toString());
 
-                    message = responseEntity.getBody();
+                    // message = responseEntity.getBody();
+                    message = response.getOutput().getText().get(0);
+
                     break;
                 }
                 case ConstantData.ACTION_TURN_OFF:{
@@ -338,7 +340,9 @@ public class RestAPIController {
 
                     System.out.println(responseEntity.toString());
 
-                    message = responseEntity.getBody();
+                    // message = responseEntity.getBody();
+                    message = response.getOutput().getText().get(0);
+
                     break;
                 }
                 case ConstantData.ACTION_SET:{
@@ -383,9 +387,11 @@ public class RestAPIController {
 
                     responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
-                    System.out.println(responseEntity.toString());
+                    // System.out.println(responseEntity.toString());
 
-                    message = responseEntity.getBody();
+                    // message = responseEntity.getBody();
+                    message = response.getOutput().getText().get(0);
+
                     break;
                 }
                 case ConstantData.ACTION_ADJUST:{
@@ -422,7 +428,7 @@ public class RestAPIController {
 
                         JsonNode jsonNode = mapper.readTree(json);
 
-                        value = jsonNode.get(ConstantData.RESULT_DATA).get(attribute).doubleValue();
+                        value = jsonNode.get(ConstantData.RESULT_DATA).get(ConstantData.VALUE).doubleValue();
                     }catch (Exception e){
                         System.err.println(e.getMessage());
                         System.exit(6);
@@ -446,6 +452,7 @@ public class RestAPIController {
 
                     responseEntity = this.restTemplate.exchange(url, method, entity, String.class);
 
+                    message = response.getOutput().getText().get(0);
                     break;
                 }
                 default:{
@@ -455,13 +462,13 @@ public class RestAPIController {
 
         }
 
+        System.out.println(response.getOutput().getText());
+        System.out.println(message);
 
-        if(!response.getOutput().getText().isEmpty() && !actionCheck){
+        if(!actionCheck){
             message = response.getOutput().getText().get(0);
         }
 
-
-        //System.out.println(response);
 
     	return message;
     }

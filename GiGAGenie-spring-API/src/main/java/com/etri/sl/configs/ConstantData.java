@@ -45,5 +45,6 @@ public class ConstantData {
     // Slot
     public static final String BRIGHTNESS = "brightness";
     public static final String COLOR = "color";
+    public static final String VALUE = "value";
 
 }
